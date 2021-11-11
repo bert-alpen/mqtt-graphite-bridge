@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>mqtt_graphite_bridge</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ahd.Graphite" Version="2.3.0" />
+    <PackageReference Include="MQTTnet" Version="3.0.16" />
+  </ItemGroup>
+
+</Project>
