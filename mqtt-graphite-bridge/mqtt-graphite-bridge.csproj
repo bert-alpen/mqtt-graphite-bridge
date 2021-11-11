@@ -10,6 +10,7 @@
     <PackageReference Include="ahd.Graphite" Version="2.3.0" />
     <PackageReference Include="MQTTnet" Version="3.0.16" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="3.1.1" />
 </ItemGroup>
 
 </Project>
