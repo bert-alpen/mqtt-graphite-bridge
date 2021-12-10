@@ -9,11 +9,11 @@ using Microsoft.Extensions.Options;
 
 namespace mqtt_graphite_bridge
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            await CreateHostBuilder(args).Build().RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host
