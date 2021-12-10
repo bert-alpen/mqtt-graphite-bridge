@@ -10,12 +10,12 @@ namespace mqtt_graphite_bridge
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly WorkerConfiguration _config;
 
-        public Worker(ILogger<Worker> logger, IConfiguration configuration)
+        public Worker(ILogger<Worker> logger, IOptions<WorkerConfiguration> options)
         {
             _logger = logger;
-            _configuration = configuration;
+            _config = options.Value;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
