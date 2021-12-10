@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mqtt-graphite-bridge", "mqtt-graphite-bridge\mqtt-graphite-bridge.csproj", "{3D02BE70-C123-45BC-9ACA-70E7BAAB1A90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MqttGraphiteBridge", "mqtt_graphite_bridge\MqttGraphiteBridge.csproj", "{3D02BE70-C123-45BC-9ACA-70E7BAAB1A90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mqtt-graphite-bridge-tests", "mqtt-graphite-bridge-tests\mqtt-graphite-bridge-tests.csproj", "{051B6DC5-5B25-49AC-9B16-9087F6173731}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MqttGraphiteBridgeTests", "mqtt_graphite_bridge_tests\MqttGraphiteBridgeTests.csproj", "{051B6DC5-5B25-49AC-9B16-9087F6173731}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
