@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace mqtt_graphite_bridge
+namespace MqttGraphiteBridge
 {
     public class Worker : BackgroundService
     {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace mqtt_graphite_bridge
+namespace MqttGraphiteBridge
 {
 
     public class ConfigureWorkerOptions : IConfigureOptions<WorkerConfiguration>

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace mqtt_graphite_bridge
+namespace MqttGraphiteBridge
 {
     public class Program
     {
