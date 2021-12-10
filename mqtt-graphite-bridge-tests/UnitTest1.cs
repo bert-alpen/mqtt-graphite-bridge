@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace mqtt_graphite_bridge_tests
+namespace MqttGraphiteBridgeTests
 {
     public class UnitTest1
     {
