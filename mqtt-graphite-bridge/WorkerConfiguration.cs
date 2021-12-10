@@ -18,7 +18,12 @@ namespace mqtt_graphite_bridge
         }
         public void Configure(WorkerConfiguration options)
         {
-            throw new NotImplementedException();
+            options.Source.Host = _configuration.GetValue<string>("--source-host");
+            options.Source.Topic = _configuration.GetValue<string>("--source-topic");
+            options.Source.Port = _configuration.GetValue<int>("--source-port");
+            options.Target.Host = _configuration.GetValue<string>("--target-host");
+            options.Target.Topic = _configuration.GetValue<string>("--target-topic");
+            options.Target.Port = _configuration.GetValue<int>("--target-port");
         }
     }
 
