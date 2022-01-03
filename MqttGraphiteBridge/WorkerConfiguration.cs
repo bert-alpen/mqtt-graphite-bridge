@@ -39,10 +39,5 @@ namespace MqttGraphiteBridge
         public Endpoint Target { get; set; }
     }
 
-    public class Endpoint
-    {
-        public string Host { get; set; }
-        public int Port { get; set; }
-        public string Topic { get; set; }
-    }
+
 }
