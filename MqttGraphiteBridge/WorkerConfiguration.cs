@@ -8,35 +8,42 @@ using Microsoft.Extensions.Options;
 
 namespace MqttGraphiteBridge
 {
-
-    public class ConfigureWorkerOptions : IConfigureOptions<WorkerConfiguration>
-    {
-        private IConfiguration _configuration;
-        public ConfigureWorkerOptions(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-        public void Configure(WorkerConfiguration options)
-        {
-            options.Source.Host = _configuration.GetValue<string>("--source-host");
-            options.Source.Topic = _configuration.GetValue<string>("--source-topic");
-            options.Source.Port = _configuration.GetValue<int>("--source-port");
-            options.Target.Host = _configuration.GetValue<string>("--target-host");
-            options.Target.Topic = _configuration.GetValue<string>("--target-topic");
-            options.Target.Port = _configuration.GetValue<int>("--target-port");
-        }
-    }
-
     public class WorkerConfiguration
     {
         public WorkerConfiguration()
         {
-            Source = new Endpoint();
-            Target = new Endpoint();
         }
 
-        public Endpoint Source { get; set; }
-        public Endpoint Target { get; set; }
+        public Endpoint Source =>
+            new Endpoint()
+            {
+                Host = SourceHost,
+                Port = SourcePort,
+                UserName = SourceUserName,
+                Password = SourcePassword,
+                Topic = SourceTopic,
+            };
+
+        public Endpoint Target =>
+            new Endpoint()
+            {
+                Host = TargetHost,
+                Port = TargetPort,
+                UserName = TargetUserName,
+                Password = TargetPassword,
+                Topic = TargetTopic,
+            };
+        public string SourceHost { get; set; }
+        public int SourcePort { get; set; }
+        public string SourceTopic { get; set; }
+        public string SourceUserName { get; set; }
+        public string SourcePassword { get; set; }
+        public string TargetHost { get; set; }
+        public int TargetPort { get; set; }
+        public string TargetTopic { get; set; }
+        public string TargetUserName { get; set; }
+        public string TargetPassword { get; set; }
+        public string ClientId { get; set; }
     }
 
 
