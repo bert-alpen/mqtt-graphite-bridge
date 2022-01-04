@@ -70,7 +70,7 @@ namespace MqttGraphiteBridge
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            if (!stoppingToken.IsCancellationRequested)
             {
                 using (var mqttClient = CreateSourceClient(_config.Source))
                 {
@@ -85,8 +85,10 @@ namespace MqttGraphiteBridge
                         return;
                     }
 
-
-                    await Task.Delay(5000, stoppingToken);
+                    while (!stoppingToken.IsCancellationRequested)
+                    {
+                        await Task.Delay(5000, stoppingToken);
+                    }
                 }
             }
         }
