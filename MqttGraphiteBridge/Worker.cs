@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MQTTnet;
+using MQTTnet.Adapter;
 using MQTTnet.Client;
 using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Disconnecting;
@@ -70,6 +71,22 @@ namespace MqttGraphiteBridge
                 .Build();
         }
 
+        private async Task<MqttClientConnectResultCode> ConnectSourceAsync(IMqttClient client, IMqttClientOptions sourceOptions,
+            CancellationToken cancellationToken)
+        {
+            var resultCode = MqttClientConnectResultCode.UnspecifiedError;
+            try
+            {
+                var result = await client.ConnectAsync(sourceOptions, cancellationToken);
+                resultCode = result.ResultCode;
+            }
+            catch (MqttConnectingFailedException e)
+            {
+                _logger.LogError($"Connection to publisher failed. Reason: {e.ResultCode}");
+            }
+
+            return resultCode;
+        }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             if (!stoppingToken.IsCancellationRequested)
@@ -77,18 +94,17 @@ namespace MqttGraphiteBridge
                 using (var mqttClient = CreateSourceClient(_config.Source))
                 {
                     var options = CreateSourceOptions(_config.Source, _config.ClientId);
-                    try
-                    {
-                        var connectionResult = await mqttClient.ConnectAsync(options, stoppingToken);
-                    }
-                    catch (Exception e)
-                    {
-                        _lifetime.StopApplication();
-                        return;
-                    }
 
                     while (!stoppingToken.IsCancellationRequested)
                     {
+                        var connectionResult = await ConnectSourceAsync(mqttClient, options, stoppingToken);
+
+                        if (connectionResult != MqttClientConnectResultCode.Success)
+                        {
+                            _lifetime.StopApplication();
+                            return;
+                        }
+
                         await Task.Delay(5000, stoppingToken);
                     }
                 }
