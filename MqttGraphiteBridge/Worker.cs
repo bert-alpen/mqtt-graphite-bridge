@@ -84,7 +84,7 @@ namespace MqttGraphiteBridge
             return resultCode;
         }
 
-        private async void SubscribeToTopic(IMqttClient client, string topic)
+        private async void SubscribeToTopicAsync(IMqttClient client, string topic)
         {
             var sr = await client.SubscribeAsync(topic);
             _logger.Log(LogLevel.Information, "Subscribed");
@@ -103,7 +103,7 @@ namespace MqttGraphiteBridge
 
                         if (connectionResult == MqttClientConnectResultCode.Success)
                         {
-                            SubscribeToTopic(mqttClient, _config.Source.Topic);
+                            SubscribeToTopicAsync(mqttClient, _config.Source.Topic);
                         }
                         else
                         {
