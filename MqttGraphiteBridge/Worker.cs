@@ -19,11 +19,13 @@ namespace MqttGraphiteBridge
     {
         private readonly ILogger<Worker> _logger;
         private readonly WorkerConfiguration _config;
+        private readonly IHostApplicationLifetime _lifetime;
 
-        public Worker(ILogger<Worker> logger, IOptions<WorkerConfiguration> options)
+        public Worker(ILogger<Worker> logger, IOptions<WorkerConfiguration> options, IHostApplicationLifetime lifetime)
         {
             _logger = logger;
             _config = options.Value;
+            _lifetime = lifetime;
         }
 
         private IMqttClient CreateSourceClient(Endpoint sourceConfiguration)
@@ -81,7 +83,7 @@ namespace MqttGraphiteBridge
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError(e.ToString());
+                        _lifetime.StopApplication();
                         return;
                     }
 
