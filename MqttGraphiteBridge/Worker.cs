@@ -87,6 +87,13 @@ namespace MqttGraphiteBridge
 
             return resultCode;
         }
+
+        private async void SubscribeToTopic(IMqttClient client, string topic)
+        {
+            var sr = await client.SubscribeAsync(topic); 
+
+            _logger.Log(LogLevel.Information, "Subscribed");
+        }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             if (!stoppingToken.IsCancellationRequested)
@@ -99,7 +106,12 @@ namespace MqttGraphiteBridge
                     {
                         var connectionResult = await ConnectSourceAsync(mqttClient, options, stoppingToken);
 
-                        if (connectionResult != MqttClientConnectResultCode.Success)
+                        if (connectionResult == MqttClientConnectResultCode.Success)
+                        {
+                            SubscribeToTopic(mqttClient, _config.Source.Topic);
+
+                        }
+                        else
                         {
                             _lifetime.StopApplication();
                             return;
