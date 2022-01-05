@@ -109,17 +109,41 @@ namespace MqttGraphiteBridge
                         if (connectionResult == MqttClientConnectResultCode.Success)
                         {
                             SubscribeToTopic(mqttClient, _config.Source.Topic);
-
                         }
                         else
                         {
-                            _lifetime.StopApplication();
-                            return;
+                            // If error is recoverable re-try to connect
+                            if (!ConnectionFailureIsRecoverable(connectionResult))
+                            {
+                                _logger.LogError($"Unrecoverable error connecting to publisher. Terminating.");
+                                _lifetime.StopApplication();
+                                return;
+                            }
                         }
 
                         await Task.Delay(5000, stoppingToken);
                     }
                 }
+            }
+        }
+
+        private bool ConnectionFailureIsRecoverable(MqttClientConnectResultCode resultCode)
+        {
+            if (resultCode == MqttClientConnectResultCode.Success)
+            {
+                throw new ArgumentOutOfRangeException(nameof(resultCode), "Status code 'Success' is not a connection failure");
+            }
+            switch (resultCode)
+            {
+                case MqttClientConnectResultCode.ServerUnavailable:
+                case MqttClientConnectResultCode.ServerBusy:
+                    {
+                        return true;
+                    }
+                default:
+                    {
+                        return false;
+                    }
             }
         }
     }
