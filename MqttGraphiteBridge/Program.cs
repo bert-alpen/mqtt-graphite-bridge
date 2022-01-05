@@ -24,7 +24,7 @@ namespace MqttGraphiteBridge
                 services
                     .AddHostedService<Worker>()
                     .AddOptions()
-                    .AddTransient<IConfigureOptions<WorkerConfiguration>, ConfigureWorkerOptions>();
+                    .Configure<WorkerConfiguration>(hostContext.Configuration.GetSection("Worker"));
             })
             .ConfigureHostConfiguration(configHost =>
             {
