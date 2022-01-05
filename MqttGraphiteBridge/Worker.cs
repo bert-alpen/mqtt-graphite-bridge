@@ -1,18 +1,17 @@
-using System;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MQTTnet;
-using MQTTnet.Adapter;
 using MQTTnet.Client;
 using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
 using MQTTnet.Client.Receiving;
-using MQTTnet.Client.Subscribing;
+using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using MQTTnet.Adapter;
 
 namespace MqttGraphiteBridge
 {
@@ -36,9 +35,6 @@ namespace MqttGraphiteBridge
             mqttClient.ConnectedHandler = new MqttClientConnectedHandlerDelegate(args =>
             {
                 _logger.Log(LogLevel.Information, $"Publisher  {sourceConfiguration.Host}:{sourceConfiguration.Port} Connected");
-
-                var sr = mqttClient.SubscribeAsync(sourceConfiguration.Topic);
-                _logger.Log(LogLevel.Information, "Subscribed");
             });
 
             mqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(args =>
@@ -90,8 +86,7 @@ namespace MqttGraphiteBridge
 
         private async void SubscribeToTopic(IMqttClient client, string topic)
         {
-            var sr = await client.SubscribeAsync(topic); 
-
+            var sr = await client.SubscribeAsync(topic);
             _logger.Log(LogLevel.Information, "Subscribed");
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
