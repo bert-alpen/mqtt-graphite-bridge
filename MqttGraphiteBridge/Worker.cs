@@ -50,7 +50,7 @@ namespace MqttGraphiteBridge
                         else
                         {
                             // If error is recoverable re-try to connect
-                            if (!mqttSource.ConnectionFailureIsRecoverable(connectionResult))
+                            if (!mqttClient.ConnectionFailureIsRecoverable(connectionResult))
                             {
                                 _logger.LogError($"Unrecoverable error connecting to publisher. Terminating.");
                                 _lifetime.StopApplication();

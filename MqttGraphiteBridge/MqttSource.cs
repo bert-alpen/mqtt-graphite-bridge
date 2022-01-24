@@ -61,26 +61,6 @@ namespace MqttGraphiteBridge
                 //.WithCommunicationTimeout(new TimeSpan(0, 0, 5))
                 .Build();
         }
-
-        public bool ConnectionFailureIsRecoverable(MqttClientConnectResultCode resultCode)
-        {
-            if (resultCode == MqttClientConnectResultCode.Success)
-            {
-                throw new ArgumentOutOfRangeException(nameof(resultCode), "Status code 'Success' is not a connection failure");
-            }
-            switch (resultCode)
-            {
-                case MqttClientConnectResultCode.ServerUnavailable:
-                case MqttClientConnectResultCode.ServerBusy:
-                    {
-                        return true;
-                    }
-                default:
-                    {
-                        return false;
-                    }
-            }
-        }
     }
 
     public static class MqttClientExtension
@@ -112,6 +92,26 @@ namespace MqttGraphiteBridge
         {
             var sr = await client.SubscribeAsync(topic);
             logger?.Log(LogLevel.Information, "Subscribed");
+        }
+
+        public static bool ConnectionFailureIsRecoverable(this IMqttClient client, MqttClientConnectResultCode resultCode)
+        {
+            if (resultCode == MqttClientConnectResultCode.Success)
+            {
+                throw new ArgumentOutOfRangeException(nameof(resultCode), "Status code 'Success' is not a connection failure");
+            }
+            switch (resultCode)
+            {
+                case MqttClientConnectResultCode.ServerUnavailable:
+                case MqttClientConnectResultCode.ServerBusy:
+                {
+                    return true;
+                }
+                default:
+                {
+                    return false;
+                }
+            }
         }
     }
 }
