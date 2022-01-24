@@ -15,10 +15,10 @@ using MQTTnet.Client.Receiving;
 
 namespace MqttGraphiteBridge
 {
-    public class MqttSource
+    public class MqttClientFactory
     {
         private readonly ILogger<Worker> _logger;
-        public MqttSource(ILogger<Worker> logger)
+        public MqttClientFactory(ILogger<Worker> logger)
         {
             _logger = logger;
         }
@@ -51,6 +51,7 @@ namespace MqttGraphiteBridge
 
             return mqttClient;
         }
+
         public IMqttClientOptions CreateSourceOptions(Endpoint sourceConfiguration, string clientId)
         {
             return new MqttClientOptionsBuilder()
