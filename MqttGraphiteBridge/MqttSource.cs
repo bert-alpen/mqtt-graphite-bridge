@@ -61,12 +61,7 @@ namespace MqttGraphiteBridge
                 //.WithCommunicationTimeout(new TimeSpan(0, 0, 5))
                 .Build();
         }
-       
-        public async void SubscribeToTopicAsync(IMqttClient client, string topic)
-        {
-            var sr = await client.SubscribeAsync(topic);
-            _logger.Log(LogLevel.Information, "Subscribed");
-        }
+
         public bool ConnectionFailureIsRecoverable(MqttClientConnectResultCode resultCode)
         {
             if (resultCode == MqttClientConnectResultCode.Success)
@@ -111,6 +106,12 @@ namespace MqttGraphiteBridge
                 logger?.LogError($"Connection to publisher failed with exception: {e}");
                 return MqttClientConnectResultCode.UnspecifiedError;
             }
+        }
+
+        public static async void SubscribeToTopicAsync(this IMqttClient client, string topic, ILogger logger)
+        {
+            var sr = await client.SubscribeAsync(topic);
+            logger?.Log(LogLevel.Information, "Subscribed");
         }
     }
 }

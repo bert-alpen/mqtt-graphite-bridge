@@ -45,7 +45,7 @@ namespace MqttGraphiteBridge
 
                         if (connectionResult == MqttClientConnectResultCode.Success)
                         {
-                            mqttSource.SubscribeToTopicAsync(mqttClient, _config.Source.Topic);
+                            mqttClient.SubscribeToTopicAsync(_config.Source.Topic, _logger);
                         }
                         else
                         {
