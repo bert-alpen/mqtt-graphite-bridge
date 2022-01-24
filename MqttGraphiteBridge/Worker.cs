@@ -41,7 +41,7 @@ namespace MqttGraphiteBridge
 
                     while (!stoppingToken.IsCancellationRequested)
                     {
-                        var connectionResult = await mqttSource.ConnectSourceAsync(mqttClient, options, stoppingToken);
+                        var connectionResult = await mqttClient.ConnectSourceAsync(options, stoppingToken, _logger);
 
                         if (connectionResult == MqttClientConnectResultCode.Success)
                         {

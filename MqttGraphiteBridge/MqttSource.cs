@@ -61,22 +61,7 @@ namespace MqttGraphiteBridge
                 //.WithCommunicationTimeout(new TimeSpan(0, 0, 5))
                 .Build();
         }
-        public async Task<MqttClientConnectResultCode> ConnectSourceAsync(IMqttClient client, IMqttClientOptions sourceOptions,
-            CancellationToken cancellationToken)
-        {
-            var resultCode = MqttClientConnectResultCode.UnspecifiedError;
-            try
-            {
-                var result = await client.ConnectAsync(sourceOptions, cancellationToken);
-                resultCode = result.ResultCode;
-            }
-            catch (MqttConnectingFailedException e)
-            {
-                _logger.LogError($"Connection to publisher failed. Reason: {e.ResultCode}");
-            }
-
-            return resultCode;
-        }
+       
         public async void SubscribeToTopicAsync(IMqttClient client, string topic)
         {
             var sr = await client.SubscribeAsync(topic);
@@ -99,6 +84,32 @@ namespace MqttGraphiteBridge
                     {
                         return false;
                     }
+            }
+        }
+    }
+
+    public static class MqttClientExtension
+    {
+        public static async Task<MqttClientConnectResultCode> ConnectSourceAsync(
+            this IMqttClient client, 
+            IMqttClientOptions sourceOptions,
+            CancellationToken cancellationToken,
+            ILogger logger)
+        {
+            try
+            {
+                var result = await client.ConnectAsync(sourceOptions, cancellationToken);
+                return result.ResultCode;
+            }
+            catch (MqttConnectingFailedException e)
+            {
+                logger?.LogError($"Connection to publisher failed. Reason: {e.ResultCode}");
+                return e.ResultCode;
+            }
+            catch (Exception e)
+            {
+                logger?.LogError($"Connection to publisher failed with exception: {e}");
+                return MqttClientConnectResultCode.UnspecifiedError;
             }
         }
     }
