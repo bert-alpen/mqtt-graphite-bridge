@@ -40,7 +40,7 @@ namespace MqttGraphiteBridge
         public static async void SubscribeToTopicAsync(this IMqttClient client, string topic, ILogger logger)
         {
             var sr = await client.SubscribeAsync(topic);
-            logger?.Log(LogLevel.Information, "Subscribed");
+            logger?.Log(LogLevel.Information, $"Subscribed to topic {topic}");
         }
 
         public static bool ConnectionFailureIsRecoverable(this IMqttClient client, MqttClientConnectResultCode resultCode)
