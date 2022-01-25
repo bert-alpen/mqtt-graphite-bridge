@@ -9,6 +9,7 @@ using MQTTnet.Adapter;
 using MQTTnet.Client;
 using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Options;
+using MQTTnet.Exceptions;
 
 namespace MqttGraphiteBridge
 {
@@ -29,6 +30,11 @@ namespace MqttGraphiteBridge
             {
                 logger?.LogError($"Connection to publisher failed. Reason: {e.ResultCode}");
                 return e.ResultCode;
+            }
+            catch (MqttProtocolViolationException e)
+            {
+                logger?.LogError($"Connection to publisher failed with protocol error. Message: {e.Message}");
+                return MqttClientConnectResultCode.ProtocolError;
             }
             catch (Exception e)
             {
