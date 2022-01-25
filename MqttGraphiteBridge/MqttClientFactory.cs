@@ -15,7 +15,7 @@ using MQTTnet.Client.Receiving;
 
 namespace MqttGraphiteBridge
 {
-    public class MqttClientFactory
+    public class MqttClientFactory : IMqttClientFactory
     {
         private readonly ILogger<Worker> _logger;
         public MqttClientFactory(ILogger<Worker> logger)
