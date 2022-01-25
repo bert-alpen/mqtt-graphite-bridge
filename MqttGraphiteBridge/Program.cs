@@ -1,11 +1,6 @@
-using System.IO;
-using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace MqttGraphiteBridge
 {
@@ -24,7 +19,8 @@ namespace MqttGraphiteBridge
                 services
                     .AddHostedService<Worker>()
                     .AddOptions()
-                    .Configure<WorkerConfiguration>(hostContext.Configuration.GetSection("Worker"));
+                    .Configure<WorkerConfiguration>(hostContext.Configuration.GetSection("Worker"))
+                    .AddTransient<IMqttClientFactory, MqttClientFactory>();
             })
             .ConfigureHostConfiguration(configHost =>
             {
