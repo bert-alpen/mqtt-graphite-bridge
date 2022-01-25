@@ -17,8 +17,8 @@ namespace MqttGraphiteBridge
 {
     public class MqttClientFactory : IMqttClientFactory
     {
-        private readonly ILogger<Worker> _logger;
-        public MqttClientFactory(ILogger<Worker> logger)
+        private readonly ILogger<MqttClientFactory> _logger;
+        public MqttClientFactory(ILogger<MqttClientFactory> logger)
         {
             _logger = logger;
         }

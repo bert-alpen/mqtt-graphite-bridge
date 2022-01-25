@@ -20,24 +20,24 @@ namespace MqttGraphiteBridge
         private readonly ILogger<Worker> _logger;
         private readonly WorkerConfiguration _config;
         private readonly IHostApplicationLifetime _lifetime;
+        private readonly IMqttClientFactory _mqttClientFactory;
 
-        public Worker(ILogger<Worker> logger, IOptions<WorkerConfiguration> options, IHostApplicationLifetime lifetime)
+        public Worker(ILogger<Worker> logger, IOptions<WorkerConfiguration> options, IHostApplicationLifetime lifetime, IMqttClientFactory mqttClientFactory)
         {
             _logger = logger;
             _config = options.Value;
             _lifetime = lifetime;
+            _mqttClientFactory = mqttClientFactory;
         }
 
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var mqttSource = new MqttSource(_logger);
-
             if (!stoppingToken.IsCancellationRequested)
             {
-                using (var mqttClient = mqttSource.CreateSourceClient(_config.Source))
+                using (var mqttClient = _mqttClientFactory.CreateSourceClient(_config.Source))
                 {
-                    var options = mqttSource.CreateSourceOptions(_config.Source, _config.ClientId);
+                    var options = _mqttClientFactory.CreateSourceOptions(_config.Source, _config.ClientId);
 
                     while (!stoppingToken.IsCancellationRequested)
                     {
