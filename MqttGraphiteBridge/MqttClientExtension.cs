@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ahd.Graphite;
 using Microsoft.Extensions.Logging;
 using MQTTnet.Adapter;
 using MQTTnet.Client;
@@ -69,6 +70,13 @@ namespace MqttGraphiteBridge
                     return false;
                 }
             }
+        }
+
+        public static Datapoint EmptyDatapoint => new Datapoint("", 0, 0);
+
+        public static bool IsEmpty(this Datapoint datapoint)
+        {
+            return datapoint.UnixTimestamp > 0;
         }
     }
 }
