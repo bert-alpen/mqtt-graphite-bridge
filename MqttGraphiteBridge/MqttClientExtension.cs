@@ -59,6 +59,8 @@ namespace MqttGraphiteBridge
             {
                 case MqttClientConnectResultCode.ServerUnavailable:
                 case MqttClientConnectResultCode.ServerBusy:
+                case MqttClientConnectResultCode.ConnectionRateExceeded:
+                case MqttClientConnectResultCode.QuotaExceeded:
                 {
                     return true;
                 }
