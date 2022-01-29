@@ -20,7 +20,8 @@ namespace MqttGraphiteBridge
         {
             _logger = logger;
         }
-        public IMqttClient CreateSourceClient(Endpoint sourceConfiguration)
+        
+        public IMqttClient CreateSourceClient(Endpoint sourceConfiguration, Endpoint targetConfiguration)
         {
             var mqttClient = new MqttFactory().CreateMqttClient();
 
@@ -32,6 +33,26 @@ namespace MqttGraphiteBridge
             mqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(args =>
             {
                 _logger.Log(LogLevel.Information, $"Message received for topic {args.ApplicationMessage.Topic}: {System.Text.Encoding.UTF8.GetString(args.ApplicationMessage.Payload)}");
+
+                var target = GetTargetClient(targetConfiguration);
+
+                var dataPoint = CreateDatapointFromMessage(args.ApplicationMessage);
+                if (dataPoint.IsEmpty())
+                {
+                    _logger.Log(LogLevel.Debug, $"Could not extract value from payload. Skipping.");
+                    return;
+                }
+
+                try
+                {
+                    target.Send(new[] { dataPoint });
+                    _logger.Log(LogLevel.Debug, $"Data sent to target");
+                }
+                catch (Exception e)
+                {
+                    _logger.Log(LogLevel.Warning, "Target is not receiving data, discarding.");
+                }
+
             });
 
             mqttClient.DisconnectedHandler = new MqttClientDisconnectedHandlerDelegate(args =>

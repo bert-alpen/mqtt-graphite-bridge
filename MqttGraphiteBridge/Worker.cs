@@ -27,7 +27,7 @@ namespace MqttGraphiteBridge
         {
             if (!stoppingToken.IsCancellationRequested)
             {
-                using (var mqttClient = _mqttClientFactory.CreateSourceClient(_config.Source))
+                using (var mqttClient = _mqttClientFactory.CreateSourceClient(_config.Source, _config.Target))
                 {
                     var options = _mqttClientFactory.CreateSourceOptions(_config.Source, _config.ClientId);
 

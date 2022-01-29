@@ -5,7 +5,7 @@ namespace MqttGraphiteBridge
 {
     public interface IMqttClientFactory
     {
-        IMqttClient CreateSourceClient(Endpoint sourceConfiguration);
+        IMqttClient CreateSourceClient(Endpoint sourceConfiguration, Endpoint targetConfiguration);
         IMqttClientOptions CreateSourceOptions(Endpoint sourceConfiguration, string clientId);
     }
 }
