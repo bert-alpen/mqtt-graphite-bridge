@@ -12,14 +12,21 @@ namespace MqttGraphiteBridge
         private readonly ILogger<Worker> _logger;
         private readonly WorkerConfiguration _config;
         private readonly IHostApplicationLifetime _lifetime;
-        private readonly IMqttClientFactory _mqttClientFactory;
+        private readonly IMqttSourceFactory _mqttClientFactory;
+        private readonly IGraphiteClientFactory _graphiteClientFactory;
 
-        public Worker(ILogger<Worker> logger, IOptions<WorkerConfiguration> options, IHostApplicationLifetime lifetime, IMqttClientFactory mqttClientFactory)
+        public Worker(
+            ILogger<Worker> logger,
+            IOptions<WorkerConfiguration> options,
+            IHostApplicationLifetime lifetime,
+            IMqttSourceFactory mqttClientFactory,
+            IGraphiteClientFactory graphiteClientFactory)
         {
             _logger = logger;
             _config = options.Value;
             _lifetime = lifetime;
             _mqttClientFactory = mqttClientFactory;
+            _graphiteClientFactory = graphiteClientFactory;
         }
 
 

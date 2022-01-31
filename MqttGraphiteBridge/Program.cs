@@ -20,7 +20,8 @@ namespace MqttGraphiteBridge
                     .AddHostedService<Worker>()
                     .AddOptions()
                     .Configure<WorkerConfiguration>(hostContext.Configuration.GetSection("Worker"))
-                    .AddTransient<IMqttClientFactory, MqttClientFactory>();
+                    .AddTransient<IMqttSourceFactory, MqttClientFactory>()
+                    .AddTransient<IGraphiteClientFactory, GraphiteClientFactory>();
             })
             .ConfigureHostConfiguration(configHost =>
             {
