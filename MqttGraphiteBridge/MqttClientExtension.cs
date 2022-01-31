@@ -76,7 +76,7 @@ namespace MqttGraphiteBridge
 
         public static bool IsEmpty(this Datapoint datapoint)
         {
-            return datapoint.UnixTimestamp > 0;
+            return datapoint.UnixTimestamp <= 0;
         }
     }
 }
