@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Globalization;
+using System.Threading.Tasks;
+using ahd.Graphite;
+using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Connecting;
@@ -10,39 +14,23 @@ namespace MqttGraphiteBridge
 {
     public class MqttClientFactory : IMqttClientFactory
     {
-        private readonly ILogger<MqttClientFactory> _logger;
-        public MqttClientFactory(ILogger<MqttClientFactory> logger)
+        public IMqttClient CreateSourceClient(
+            Endpoint sourceConfiguration, 
+            Endpoint targetConfiguration,
+            MqttClientConnectedHandlerDelegate connectedHandler,
+            MqttApplicationMessageReceivedHandlerDelegate messageReceivedHandler,
+            MqttClientDisconnectedHandlerDelegate disconnectedHandler)
         {
-            _logger = logger;
-        }
-        public IMqttClient CreateSourceClient(Endpoint sourceConfiguration)
-        {
+
             var mqttClient = new MqttFactory().CreateMqttClient();
 
-            mqttClient.ConnectedHandler = new MqttClientConnectedHandlerDelegate(args =>
-            {
-                _logger.Log(LogLevel.Information, $"Publisher  {sourceConfiguration.Host}:{sourceConfiguration.Port} Connected");
-            });
-
-            mqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(args =>
-            {
-                _logger.Log(LogLevel.Information, $"Message received for topic {args.ApplicationMessage.Topic}: {System.Text.Encoding.UTF8.GetString(args.ApplicationMessage.Payload)}");
-            });
-
-            mqttClient.DisconnectedHandler = new MqttClientDisconnectedHandlerDelegate(args =>
-            {
-                if (args.ClientWasConnected)
-                {
-                    _logger.Log(LogLevel.Information, $"Publisher {sourceConfiguration.Host}:{sourceConfiguration.Port} disconnected. Reason: {args.Reason}");
-                }
-                else
-                {
-                    _logger.Log(LogLevel.Error, $"Connection to publisher {sourceConfiguration.Host}:{sourceConfiguration.Port} failed. Reason: {args.Reason}");
-                }
-            });
+            mqttClient.ConnectedHandler = connectedHandler;
+            mqttClient.ApplicationMessageReceivedHandler = messageReceivedHandler;
+            mqttClient.DisconnectedHandler = disconnectedHandler;
 
             return mqttClient;
         }
+
         public IMqttClientOptions CreateSourceOptions(Endpoint sourceConfiguration, string clientId)
         {
             return new MqttClientOptionsBuilder()
