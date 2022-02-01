@@ -33,6 +33,12 @@ namespace MqttGraphiteBridge
 
                     while (!stoppingToken.IsCancellationRequested)
                     {
+                        if (mqttClient.IsConnected)
+                        {
+                            await Task.Delay(5000, stoppingToken);
+                            continue;
+                        }
+                        
                         var connectionResult = await mqttClient.ConnectSourceAsync(options, stoppingToken, _logger);
 
                         if (connectionResult == MqttClientConnectResultCode.Success)

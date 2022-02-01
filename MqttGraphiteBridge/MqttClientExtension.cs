@@ -9,6 +9,7 @@ using MQTTnet.Adapter;
 using MQTTnet.Client;
 using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Options;
+using MQTTnet.Exceptions;
 
 namespace MqttGraphiteBridge
 {
@@ -30,6 +31,11 @@ namespace MqttGraphiteBridge
                 logger?.LogError($"Connection to publisher failed. Reason: {e.ResultCode}");
                 return e.ResultCode;
             }
+            catch (MqttProtocolViolationException e)
+            {
+                logger?.LogError($"Connection to publisher failed with protocol error. Message: {e.Message}");
+                return MqttClientConnectResultCode.ProtocolError;
+            }
             catch (Exception e)
             {
                 logger?.LogError($"Connection to publisher failed with exception: {e}");
@@ -40,7 +46,7 @@ namespace MqttGraphiteBridge
         public static async void SubscribeToTopicAsync(this IMqttClient client, string topic, ILogger logger)
         {
             var sr = await client.SubscribeAsync(topic);
-            logger?.Log(LogLevel.Information, "Subscribed");
+            logger?.Log(LogLevel.Information, $"Subscribed to topic {topic}");
         }
 
         public static bool ConnectionFailureIsRecoverable(this IMqttClient client, MqttClientConnectResultCode resultCode)
@@ -53,6 +59,8 @@ namespace MqttGraphiteBridge
             {
                 case MqttClientConnectResultCode.ServerUnavailable:
                 case MqttClientConnectResultCode.ServerBusy:
+                case MqttClientConnectResultCode.ConnectionRateExceeded:
+                case MqttClientConnectResultCode.QuotaExceeded:
                 {
                     return true;
                 }
