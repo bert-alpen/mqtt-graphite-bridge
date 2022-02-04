@@ -31,9 +31,12 @@ namespace MqttGraphiteBridge
                     var fileInfo = new FileInfo(configFile);
                     if (!fileInfo.Exists) throw new Exception($"The configuration file could not be found: {fileInfo.FullName}");
 
+                    var environmentConfigFile = GetEnvironmentSpecificConfigFileName(fileInfo, hostingContext.HostingEnvironment.EnvironmentName);
+
                     configuration.Sources.Clear();
                     configuration
                         .AddJsonFile(configFile, false, true)
+                        .AddJsonFile(environmentConfigFile, true, true)
                         ;
 
                     configuration.Build();
@@ -50,5 +53,13 @@ namespace MqttGraphiteBridge
                         ;
                 })
                 ;
+
+        private static string GetEnvironmentSpecificConfigFileName(FileInfo fileInfo, string environment)
+        {
+            var fileName = fileInfo.Name.Substring(0, fileInfo.Name.Length - fileInfo.Extension.Length);
+            return Path.Combine(
+                fileInfo.DirectoryName ?? Directory.GetCurrentDirectory(),
+                $"{fileName}.{environment}{fileInfo.Extension}");
+        }
     }
 }
