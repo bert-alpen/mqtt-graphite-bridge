@@ -1,0 +1,60 @@
+# Maintainer: Bert Alpen <bert.alpen@googlemail.com>
+
+pkgname=mqtt-graphite-bridge
+pkgver=0.1
+pkgrel=1
+_pkgver="${pkgver}-${pkgrel}"
+pkgdesc='A bridge to transfer data from an MQTT broker to a graphite instance'
+# only tested for armv7h, others like x86_64, aarch64, armv6h should work as well
+arch=('armv7h')
+url='https://github.com/bert-alpen/mqtt-graphite-bridge'
+license=('MIT')
+provides=('mqtt-graphite-bridge')
+conflicts=('mqtt-graphite-bridge')
+# depends=('dotnet-runtime>=5.0') no dependency on runtime because we're using self contained deployment
+makedepends=('dotnet-sdk>=5.0')
+options=("!strip")
+source=(
+        "${pkgname}-${_pkgver}.tar.gz::https://github.com/bert-alpen/mqtt-graphite-bridge/archive/refs/tags/0.1.tar.gz"
+  "${pkgname}.service"
+  "${pkgname}.sysusers"
+
+)
+sha256sums=(
+        'SKIP'
+        'SKIP'
+        'SKIP'
+)
+
+build() {
+  cd ${pkgname}-${pkgver}
+
+  # Disable dotnet telemetry
+  export DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+  if [[ "$CARCH" = "armv6h" ]] || [[ "$CARCH" = "armv7h" ]]; then
+    export TARGET_ARCHITECTURE="linux-arm"
+  elif [[ "$CARCH" = "aarch6" ]]; then
+    export TARGET_ARCHITECTURE="linux-arm64"
+  else
+    export TARGET_ARCHITECTURE="linux-x64"
+  fi
+
+  dotnet publish --runtime $TARGET_ARCHITECTURE --self-contained true --configuration Release /p:PublishSingleFile=true --output "$PWD"/publish MqttGraphiteBridge
+
+  # Clean up the runtimes folder ,keep linux-*
+  # rm -rfv publish/runtimes/  geschweifte klammer alpine-*,osx*,tizen-*,win* geschweifte klammer
+}
+
+package() {
+  # need to do this manually because install in fakeroot seems to cripple the binary
+  # install -Dm 755 ${pkgname}-${pkgver}/publish/MqttGraphiteBridge "$pkgdir"/usr/bin/${pkgname}
+  mkdir -p "$pkgdir"/usr/bin
+  cp $pkgname-$pkgver/publish/MqttGraphiteBridge $pkgname-$pkgver/publish/MqttGraphiteBridge.bak
+  cp -v -dr --no-preserve='ownership' $pkgname-$pkgver/publish/MqttGraphiteBridge "$pkgdir"/usr/bin/${pkgname}
+  chmod 755 "$pkgdir"/usr/bin/${pkgname}
+
+  install -Dm 644 ${pkgname}-${pkgver}/publish/appSettings.json "$pkgdir"/etc/${pkgname}/${pkgname}.conf
+  install -Dm 644 ${pkgname}.service  "$pkgdir"/usr/lib/systemd/system/${pkgname}.service
+  install -Dm 644 ${pkgname}.sysusers "$pkgdir"/usr/lib/sysusers.d/${pkgname}.conf
+}
