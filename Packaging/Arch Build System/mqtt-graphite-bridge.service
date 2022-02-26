@@ -1,0 +1,16 @@
+[Unit]
+Description=mqtt-graphite-bridge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=mqtt-graphite-bridge
+Group=mqtt-graphite-bridge
+Environment="MQTT_GRAPHITE_BRIDGE_CONFIG_FILE=/etc/mqtt-graphite-bridge/mqtt-graphite-bridge.conf"
+ExecStart=mqtt-graphite-bridge
+KillSignal=SIGINT
+SendSIGHUP=yes
+
+[Install]
+WantedBy=multi-user.target
