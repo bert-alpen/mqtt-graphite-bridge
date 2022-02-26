@@ -24,8 +24,8 @@ namespace MqttGraphiteBridge
                     // The path to the configuration file can be set as an environment variable. If that isn't set the default is appSettings.json
                     // in the current directory. If hostingContext.HostingEnvironment.EnvironmentName is set, an environment specific overload can be 
                     // added in the same directory.
-                    var configFile = configuration.Properties.ContainsKey("MQTT_GRAPHITE_BRIDGE_CONFIG_FILE")
-                        ? configuration.Properties["MQTT_GRAPHITE_BRIDGE_CONFIG_FILE"].ToString()
+                    var configFile = Environment.GetEnvironmentVariable("MQTT_GRAPHITE_BRIDGE_CONFIG_FILE") != null
+                        ? Environment.GetEnvironmentVariable("MQTT_GRAPHITE_BRIDGE_CONFIG_FILE")
                         : "appSettings.json";
 
                     var fileInfo = new FileInfo(configFile);
