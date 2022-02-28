@@ -1,7 +1,7 @@
 # Maintainer: Bert Alpen <bert.alpen@googlemail.com>
 
 pkgname=mqtt-graphite-bridge
-pkgver=0.1
+pkgver=0.2
 pkgrel=1
 _pkgver="${pkgver}-${pkgrel}"
 pkgdesc='A bridge to transfer data from an MQTT broker to a graphite instance'
@@ -15,15 +15,15 @@ conflicts=('mqtt-graphite-bridge')
 makedepends=('dotnet-sdk>=5.0')
 options=("!strip")
 source=(
-        "${pkgname}-${_pkgver}.tar.gz::https://github.com/bert-alpen/mqtt-graphite-bridge/archive/refs/tags/0.1.tar.gz"
+  "${pkgname}-${_pkgver}.tar.gz::https://github.com/bert-alpen/mqtt-graphite-bridge/archive/refs/tags/${pkgver}.tar.gz"
   "${pkgname}.service"
   "${pkgname}.sysusers"
 
 )
 sha256sums=(
-        'SKIP'
-        'SKIP'
-        'SKIP'
+  '8af474b20a898b001b61fdca549a3e57d682834d2ee81d124c39161776ccb1fb'
+  '375e9507344f5a445096f69571400a2167995b5725f5a72292511055414c732b'
+  '42d9686329ac5cb9a613b01c562eb2cedba8057c93f3e2b47d784a0414ecaff1'
 )
 
 build() {
