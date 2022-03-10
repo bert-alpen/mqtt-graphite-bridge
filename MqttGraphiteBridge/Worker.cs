@@ -77,7 +77,7 @@ namespace MqttGraphiteBridge
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if (!stoppingToken.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 using (var mqttClient = _mqttClientFactory.CreateSourceClient(
                     _config.Source,
@@ -87,35 +87,29 @@ namespace MqttGraphiteBridge
                     sourceDisconnectedHandler))
                 {
                     var options = _mqttClientFactory.CreateSourceOptions(_config.Source, _config.ClientId);
+                    var connectionResult = await mqttClient.ConnectSourceAsync(options, stoppingToken, _logger);
 
-                    while (!stoppingToken.IsCancellationRequested)
+                    if (connectionResult == MqttClientConnectResultCode.Success)
                     {
-                        if (mqttClient.IsConnected)
+                        mqttClient.SubscribeToTopicAsync(_config.Source.Topic, _logger);
+                    }
+                    else
+                    {
+                        // If error is recoverable re-try to connect
+                        if (!mqttClient.ConnectionFailureIsRecoverable(connectionResult))
                         {
-                            await Task.Delay(5000, stoppingToken);
-                            continue;
+                            _logger.LogError($"Unrecoverable error connecting to publisher. Terminating.");
+                            _lifetime.StopApplication();
+                            return;
                         }
+                    }
 
-                        var connectionResult = await mqttClient.ConnectSourceAsync(options, stoppingToken, _logger);
-
-                        if (connectionResult == MqttClientConnectResultCode.Success)
-                        {
-                            mqttClient.SubscribeToTopicAsync(_config.Source.Topic, _logger);
-                        }
-                        else
-                        {
-                            // If error is recoverable re-try to connect
-                            if (!mqttClient.ConnectionFailureIsRecoverable(connectionResult))
-                            {
-                                _logger.LogError($"Unrecoverable error connecting to publisher. Terminating.");
-                                _lifetime.StopApplication();
-                                return;
-                            }
-                        }
-
+                    while (mqttClient.IsConnected && !stoppingToken.IsCancellationRequested)
+                    {
                         await Task.Delay(5000, stoppingToken);
                     }
                 }
+                await Task.Delay(5000, stoppingToken);
             }
         }
     }
