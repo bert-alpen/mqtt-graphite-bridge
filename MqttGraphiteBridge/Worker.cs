@@ -71,9 +71,9 @@ namespace MqttGraphiteBridge
             });
         }
 
-        private MqttClientConnectedHandlerDelegate sourceConnectedHandler;
-        private MqttApplicationMessageReceivedHandlerDelegate messageReceivedHandler;
-        private MqttClientDisconnectedHandlerDelegate sourceDisconnectedHandler;
+        private readonly MqttClientConnectedHandlerDelegate sourceConnectedHandler;
+        private readonly MqttApplicationMessageReceivedHandlerDelegate messageReceivedHandler;
+        private readonly MqttClientDisconnectedHandlerDelegate sourceDisconnectedHandler;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
