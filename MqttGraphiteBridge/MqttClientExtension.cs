@@ -34,8 +34,24 @@ namespace MqttGraphiteBridge
             }
             catch (MqttProtocolViolationException e)
             {
-                logger?.LogError($"Connection to publisher failed with protocol error. Message: {e.Message}");
+                logger?.LogError($"Connection to publisher failed with protocol error. Exception: {e}");
                 return MqttClientConnectResultCode.ProtocolError;
+            }
+            catch (OperationCanceledException e)
+            {
+                logger?.LogError($"Connection to publisher failed: Operation was cancelled. Exception: {e}");
+                return MqttClientConnectResultCode.ServerUnavailable;
+            }
+            catch (MqttCommunicationTimedOutException e)
+            {
+                logger?.LogError($"Connection to publisher failed: Operation timed out. Exception: {e}");
+                return MqttClientConnectResultCode.ServerUnavailable;
+            }
+            catch (InvalidOperationException e)
+            {
+                return e.Message.Contains("connect/disconnect") 
+                    ? MqttClientConnectResultCode.ServerBusy 
+                    : MqttClientConnectResultCode.UnspecifiedError;
             }
             catch (Exception e)
             {
