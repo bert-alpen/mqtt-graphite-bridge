@@ -34,7 +34,7 @@ namespace MqttGraphiteBridge
             }
             catch (MqttProtocolViolationException e)
             {
-                logger?.LogError($"Connection to publisher failed with protocol error. Message: {e.Message}");
+                logger?.LogError($"Connection to publisher failed with protocol error. Exception: {e}");
                 return MqttClientConnectResultCode.ProtocolError;
             }
             catch (Exception e)
