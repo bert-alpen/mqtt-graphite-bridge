@@ -50,7 +50,7 @@ namespace MqttGraphiteBridge
                 try
                 {
                     target.Send(new[] { dataPoint });
-                    _logger.Log(LogLevel.Debug, $"Data sent to target");
+                    _logger.Log(LogLevel.Debug, $"Data sent to target, timestamp from data point: {dataPoint.UnixTimestamp}");
                 }
                 catch (Exception e)
                 {
